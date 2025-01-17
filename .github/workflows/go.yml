@@ -2,23 +2,34 @@ name: Go
 
 on:
   push:
-    branches: [ main ]
+    branches: [ release-2.8 ]
   pull_request:
-    branches: [ main ]
+    branches: [ release-2.8 ]
 
 jobs:
 
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v4
       with:
-        go-version: 1.15
+        go-version: 1.21
 
-    - uses: actions/cache@v2
+    - name: Verify Go version
+      run: |
+        go version
+        which go
+        echo "PATH: $PATH"
+
+    - name: Remove pre-installed Go (if any)
+      run: |
+        sudo rm -rf /usr/local/go || true
+        echo "Removed any pre-installed Go versions."
+
+    - uses: actions/cache@v3
       with:
         # In order:
         # * Module download cache
@@ -39,3 +50,8 @@ jobs:
 
     - name: Test
       run: go test -v ./...
+
+    - name: Debug Environment
+      run: |
+        go env
+        ls -R /opt/hostedtoolcache/go || true
