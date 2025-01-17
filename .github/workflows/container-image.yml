@@ -3,8 +3,9 @@ name: container-image
 on:
   push:
     branches:
-      - main
+      - release-2.8
     tags:
+      - "*"
   pull_request:
 
 jobs:
